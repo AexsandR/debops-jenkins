@@ -1,0 +1,31 @@
+pipeline {
+    agent any
+    
+    environment {
+        COMPOSE_DIR = '../docker-compose'
+    }
+    
+    stages {
+        stage('Deploy') {
+            steps {
+                dir(env.COMPOSE_DIR) {
+                    sh 'docker-compose down || true'
+                    sh 'docker-compose up -d --build'
+                }
+            }
+        }    
+    }
+    
+    post {
+        always {
+            echo 'Deployment pipeline completed'
+        }
+        success {
+            echo 'Services deployed successfully!'
+            sh 'docker ps'
+        }
+        failure {
+            echo 'Deployment failed!'
+        }
+    }
+}

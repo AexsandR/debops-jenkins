@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Stop Services') {
+            steps {
+                script {
+                    dir('/home/borovkov/_devops/docker-compose') {
+                        sh '''
+                            echo "Stopping all services..."
+                            docker-compose down -v --remove-orphans
+                        '''
+                    }
+                }
+            }
+        }
+        
+        stage('Cleanup') {
+            steps {
+                sh '''
+                    echo "Cleaning up Docker resources..."
+                    docker system prune -f || true
+                    echo "Current containers:"
+                    docker ps -a
+                '''
+            }
+        }
+    }
+    
+    post {
+        always {
+            echo 'Service destruction completed'
+        }
+    }
+}
