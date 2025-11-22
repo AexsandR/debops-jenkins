@@ -6,15 +6,17 @@ pipeline {
     }
     
     stages {
-        steps {
-        sh 'docker-compose -f ./_devops/docker-compose/docker-compose.yml down || true'
-        sh 'docker-compose -f ./_devops/docker-compose/docker-compose.yml up -d'
-      }
+        stage('Deploy') {
+            steps {
+                sh 'docker-compose -f ./_devops/docker-compose/docker-compose.yml down || true'
+                sh 'docker-compose -f ./_devops/docker-compose/docker-compose.yml up -d'
+            }
+        }
     }
-  }
-      post {
+    
+    post {
         always {
             cleanWs()
         }
-    } 
+    }
 }
